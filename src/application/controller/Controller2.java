@@ -2,6 +2,7 @@ package application.controller;
 
 import application.action.Action;
 import application.action.move;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
@@ -11,15 +12,11 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 
-import java.io.DataInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.ResourceBundle;
-import javafx.application.Platform;
-public class Controller implements Initializable {
+
+public class Controller2 implements Initializable {
     private static final int PLAY_1 = 1;
     private static final int PLAY_2 = 2;
     private static final int EMPTY = 0;
@@ -38,13 +35,12 @@ public class Controller implements Initializable {
 
     private static boolean TURN = false;
 
-
     private static final int[][] chessBoard = new int[3][3];
     private static final boolean[][] flag = new boolean[3][3];
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        ClientHandler clientHandler = new ClientHandler(false);
+        ClientHandler clientHandler = new ClientHandler(true);
 
         new Thread(() -> {
             try {
@@ -82,6 +78,7 @@ public class Controller implements Initializable {
                         }
                     }
                     Thread.sleep(1);
+
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -95,6 +92,7 @@ public class Controller implements Initializable {
                 Action action = new move("move",chessBoard,TURN,flag);
 //                System.out.println("send : "+action);
                 clientHandler.send(action);
+
             }
         });
     }
