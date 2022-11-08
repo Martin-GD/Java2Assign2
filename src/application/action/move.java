@@ -111,4 +111,19 @@ public class move implements Action {
     public String getStatus() {
         return Status;
     }
+
+    @Override
+    public String getType() {
+        return null;
+    }
+
+    @Override
+    public String getUserName() {
+        return null;
+    }
+
+    @Override
+    public String getPassword() {
+        return null;
+    }
 }

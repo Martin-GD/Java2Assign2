@@ -23,7 +23,7 @@ public class ClientHandler {
         this.myTurn = myTurn;
         try {
             //你的ip，你的端口
-            socket = new Socket("localhost", 5612);
+            socket = new Socket("10.26.142.228", 5612);
             outToServer = socket.getOutputStream();
 
 

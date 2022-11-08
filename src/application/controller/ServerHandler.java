@@ -17,7 +17,6 @@ public class ServerHandler extends Thread {
         try {
             this.socket = socket;
             this.socket2 = socket2;
-            allSocket.add(this);
         } catch (Exception e) {
             e.printStackTrace();
         }

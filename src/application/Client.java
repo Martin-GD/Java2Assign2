@@ -12,6 +12,7 @@ public class Client extends Application {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader();
 
+
             fxmlLoader.setLocation(getClass().getClassLoader().getResource("mainUI.fxml"));
             Pane root = fxmlLoader.load();
             primaryStage.setTitle("Tic Tac Toe Client Line");

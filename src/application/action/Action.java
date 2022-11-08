@@ -8,4 +8,7 @@ public interface Action {
     public boolean[][] getFlag();
     public String toString();
     public String getStatus();
+    public String getType();
+    public String getUserName();
+    public String getPassword();
 }
