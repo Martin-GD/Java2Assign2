@@ -1,17 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.shape.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ButtonBar?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.shape.Line?>
+<?import javafx.scene.shape.Rectangle?>
 
-
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="application.controller.Controller">
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.controller.Controller">
    <Pane id="base" fx:id="base_square" layoutX="150.0" layoutY="50.0" prefHeight="300.0" prefWidth="300.0">
-      <Rectangle fx:id="game_panel" arcHeight="5.0" arcWidth="5.0" fill="#f2f2f2" height="270.0" layoutX="15.0"
-                 layoutY="15.0" stroke="BLACK" strokeType="INSIDE" width="270.0"/>
-      <Line endX="170.0" layoutX="115.0" layoutY="105.0" startX="-100.0"/>
-      <Line endX="170.0" layoutX="115.0" layoutY="195.0" startX="-100.0"/>
-      <Line endX="170.0" layoutX="70.0" layoutY="150.0" rotate="270.0" startX="-100.0"/>
-      <Line endX="170.0" layoutX="160.0" layoutY="151.0" rotate="90.0" startX="-100.0"/>
+      <Rectangle fx:id="game_panel" arcHeight="5.0" arcWidth="5.0" fill="#f2f2f2" height="270.0" layoutX="15.0" layoutY="15.0" stroke="BLACK" strokeType="INSIDE" width="270.0" />
+      <Line endX="170.0" layoutX="115.0" layoutY="105.0" startX="-100.0" />
+      <Line endX="170.0" layoutX="115.0" layoutY="195.0" startX="-100.0" />
+      <Line endX="170.0" layoutX="70.0" layoutY="150.0" rotate="270.0" startX="-100.0" />
+      <Line endX="170.0" layoutX="160.0" layoutY="151.0" rotate="90.0" startX="-100.0" />
    </Pane>
+   <ButtonBar layoutX="485.0" layoutY="78.0" prefHeight="68.0" prefWidth="77.0">
+     <buttons>
+       <Button mnemonicParsing="false" text="Connect" onAction="#connectButton"/>
+     </buttons>
+   </ButtonBar>
+   <ButtonBar layoutX="473.0" layoutY="180.0" prefHeight="43.0" prefWidth="97.0">
+     <buttons>
+       <Button mnemonicParsing="false" text="Account" onAction="#accountButton"/>
+     </buttons>
+   </ButtonBar>
+   <ButtonBar layoutX="452.0" layoutY="259.0" prefHeight="43.0" prefWidth="118.0">
+     <buttons>
+       <Button mnemonicParsing="false" text="Exit" onAction="#exitButton"/>
+     </buttons>
+   </ButtonBar>
 </AnchorPane>

@@ -4,10 +4,10 @@ package application.body;
 public class account {
     private String username = null;
     private String password = null;
-    private int circle_match = 0;
-    private int circle_win = 0;
-    private int line_match = 0;
-    private int line_win = 0;
+    public int circle_match = 0;
+    public int circle_win = 0;
+    public int line_match = 0;
+    public int line_win = 0;
 
     public account(String username, String password, int circle_match, int circle_win, int line_match, int line_win) {
         this.username = username;
@@ -44,5 +44,8 @@ public class account {
 
     public int getLine_win() {
         return line_win;
+    }
+    public String getAccount(){
+        return ""+username+","+password+","+circle_match+","+circle_win+","+line_match+","+line_win;
     }
 }

@@ -48,7 +48,7 @@ public class move implements Action {
         }
         for (int i = 0; i < 3; i++) {
             if (Board[0][i] == Board[1][i] && Board[0][i] == Board[2][i] && Board[0][i] != 0) {
-                if (Board[i][0] == 1)
+                if (Board[0][i] == 1)
                     return "1";
                 else return "2";
             }
@@ -59,7 +59,7 @@ public class move implements Action {
             else return "2";
         }
         if (Board[2][0] == Board[1][1] && Board[2][0] == Board[0][2] && Board[0][2] != 0) {
-            if (Board[0][0] == 1)
+            if (Board[2][0] == 1)
                 return "1";
             else return "2";
         }

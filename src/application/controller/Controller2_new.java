@@ -25,7 +25,7 @@ import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.util.Pair;
 
-public class Controller implements Initializable {
+public class Controller2_new implements Initializable {
     private static final int PLAY_1 = 1;
     private static final int PLAY_2 = 2;
     private static final int EMPTY = 0;
@@ -57,7 +57,8 @@ public class Controller implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         chooseLog();
-        clientHandler = new ClientHandler(false, myName);
+        clientHandler = new ClientHandler(true, myName);
+
         try{
             accounts = new ServerAccount();
         } catch (SQLException e) {
@@ -189,14 +190,13 @@ public class Controller implements Initializable {
                 alert.setHeaderText("Game Over");
 //                            alert.setContentText();
                 if (re.getStatus().equals("1")){
-                    // TODO: change
                     alert.setContentText("Circle win");
-                    accounts.changeData(clientHandler.getUsername(), clientHandler.myTurn, false);
+                    accounts.changeData(clientHandler.getUsername(), clientHandler.myTurn, true);
                 }
 //                                System.out.println("Circle win");
                 else if (re.getStatus().equals("2")){
                     alert.setContentText("Line win");
-                    accounts.changeData(clientHandler.getUsername(), clientHandler.myTurn, true);
+                    accounts.changeData(clientHandler.getUsername(), clientHandler.myTurn, false);
                 }
 //                                System.out.println("Line win");
                 else {
@@ -312,7 +312,6 @@ public class Controller implements Initializable {
                     myName = usernamePassword.getKey();
                     clientHandler.setUsername(myName);
                     accounts.addMatch(clientHandler.getUsername(), clientHandler.myTurn);
-
                     alertMsg("sign in successful!");
 
                 } else {

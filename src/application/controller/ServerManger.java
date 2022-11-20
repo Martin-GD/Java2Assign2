@@ -1,9 +1,11 @@
 package application.controller;
 
+import application.Server;
 import application.action.Action;
 import application.action.log;
 import application.action.move;
 import application.body.account;
+import com.mchange.v2.c3p0.ComboPooledDataSource;
 //import application.view.GUI;
 
 import java.io.*;
@@ -16,22 +18,24 @@ import java.util.ArrayList;
 import java.util.Vector;
 
 public class ServerManger extends Thread {
+    database db = new database();
     public static Vector<Player> LinePlayer = new Vector<>();
     public static Vector<Player> CirclePlayer = new Vector<>();
-    public Connection con;
+//    public Connection con ;
 
     private Socket socket = null;
 
-    public ServerManger(Socket socket, Connection con) {
+    public ServerManger(Socket socket) {
         try {
             this.socket = socket;
-            this.con = con;
+//            this.con = db.getCon();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public ServerManger() {
+    public ServerManger() throws SQLException {
+//        this.con = db.getCon();
     }
 
     @Override
@@ -67,7 +71,7 @@ public class ServerManger extends Thread {
                             out.writeUTF(log.toString());
                         }
                     }else if (log.getType().equals("signup")){
-                        insertUser(log.getUserName(), log.getPassword());
+                        System.out.println(insertUser(log.getUserName(), log.getPassword()));
                         if (log.identity.equals("line"))
                             LinePlayer.add(new Player(log.getUserName(), socket));
                         else
@@ -92,6 +96,9 @@ public class ServerManger extends Thread {
         }
     }
     public Boolean checkUser(String username, String password) throws SQLException {
+        Connection con = db.getCon();
+
+        try{
         PreparedStatement checkPass = con.prepareStatement("select username, password, circle_match, circle_win, line_match, line_win from account ");
         ResultSet resultSet = checkPass.executeQuery();
         ArrayList<account> allAccount = new ArrayList<>();
@@ -108,14 +115,28 @@ public class ServerManger extends Thread {
                 return true;
         }
         return false;
+        } catch (SQLException e){
+            return false;
+        }finally {
+            con.close();
+        }
     }
 
-    public void insertUser(String username, String password) throws SQLException {
-        PreparedStatement insertU = con.prepareStatement("insert into account (username, password, circle_match, circle_win, line_match, line_win) values (?, ?, 0,0,0,0)");
-        insertU.setString(1,username);
-        insertU.setString(2,password);
-        insertU.execute();
 
+    public String insertUser(String username, String password) throws SQLException {
+        Connection con = db.getCon();
+        try{
+            PreparedStatement insertU = con.prepareStatement("insert into account (username, password, circle_match, circle_win, line_match, line_win) values (?, ?, 0,0,0,0)");
+            insertU.setString(1,username);
+            insertU.setString(2,password);
+            insertU.execute();
+            return "success";
+        } catch (SQLException e){
+            e.printStackTrace();
+            return "fail";
+        }finally {
+            con.close();
+        }
     }
     class Player{
         public String username;
@@ -126,4 +147,41 @@ public class ServerManger extends Thread {
             this.socket = socket;
         }
     }
+    class database{
+
+        private ComboPooledDataSource dbPool = new ComboPooledDataSource();
+        private String host = "localhost";
+        private String dbname = "cs209";
+        private String user = "checker";
+        private String pwd = "123456";
+        private String port = "5432";
+
+        public database(){
+            openDB();
+        }
+
+        public void openDB() {
+
+            try {
+                dbPool.setDriverClass("org.postgresql.Driver");
+            } catch (Exception e) {
+                System.err.println("Cannot find the PostgreSQL driver. Check CLASSPATH.");
+                System.exit(1);
+            }
+            String url = "jdbc:postgresql://" + host + ":" + port + "/" + dbname;
+            dbPool.setUser(user);
+            dbPool.setPassword(pwd);
+            dbPool.setJdbcUrl(url);
+
+            dbPool.setInitialPoolSize(8);
+            dbPool.setMaxPoolSize(12);
+//            System.out.println("done");
+        }
+
+
+        public Connection getCon() throws SQLException {
+            return this.dbPool.getConnection();
+        }
+    }
+
 }

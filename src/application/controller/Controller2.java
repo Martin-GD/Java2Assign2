@@ -40,7 +40,7 @@ public class Controller2 implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        ClientHandler clientHandler = new ClientHandler(true);
+        ClientHandler clientHandler = new ClientHandler(true,"");
 
         new Thread(() -> {
             try {
