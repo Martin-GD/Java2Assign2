@@ -17,6 +17,7 @@ import javafx.scene.shape.Rectangle;
 
 
 import java.net.URL;
+import java.security.SecureRandom;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Optional;
@@ -32,6 +33,7 @@ public class Controller implements Initializable {
     private static final int BOUND = 90;
     private static final int OFFSET = 15;
     private static int logCheck = 0;
+    private int connected = 0;
 
 
     public ArrayList<Action> actions = new ArrayList<>();
@@ -49,7 +51,7 @@ public class Controller implements Initializable {
     private ClientHandler clientHandler;
     private ServerAccount accounts;
     private String myName;
-
+    private int isAddMatch = 0;
 
     private static final int[][] chessBoard = new int[3][3];
     private static final boolean[][] flag = new boolean[3][3];
@@ -57,8 +59,8 @@ public class Controller implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         chooseLog();
-        clientHandler = new ClientHandler(false, myName);
-        try{
+
+        try {
             accounts = new ServerAccount();
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -68,22 +70,30 @@ public class Controller implements Initializable {
         new Thread(() -> {
             try {
                 while (true) {
-                    Action re = clientHandler.getActions();
-                    if (re != null) {
+                    if (clientHandler != null) {
+                        Action re = clientHandler.getActions();
+                        if (re != null) {
 //                        System.out.println("change");
-                        if (re.getName().equals("move")) {
-                            moveAction(re);
-                            if (!re.getStatus().equals("going"))
-                                break;
-                        }
-                        else if (re.getName().equals("error")){
-                            if (re.getStatus().equals("another player close")){
-                                accounts.changeData(clientHandler.getUsername(), clientHandler.myTurn, true);
-                            }
-                            alertMsg(re.getStatus());
-                            System.out.println("error");
-                        }
+                            if (re.getName().equals("move")) {
+                                if (isAddMatch == 0) {
+                                    accounts.addMatch(clientHandler.getUsername(), clientHandler.myTurn);
+                                    String t = clientHandler.myTurn ? "Circle" : "Line";
+                                    user.setText("" + clientHandler.getUsername() + "&" + t);
 
+                                    isAddMatch++;
+                                }
+                                moveAction(re);
+                                if (!re.getStatus().equals("going"))
+                                    break;
+                            } else if (re.getName().equals("error")) {
+                                if (re.getStatus().equals("another player close")) {
+                                    accounts.changeData(clientHandler.getUsername(), clientHandler.myTurn, true);
+                                }
+                                alertMsg(re.getStatus());
+                                System.out.println("error");
+                            }
+
+                        }
                     }
                     Thread.sleep(1);
                 }
@@ -188,18 +198,21 @@ public class Controller implements Initializable {
                 alert.setTitle("Information Dialog");
                 alert.setHeaderText("Game Over");
 //                            alert.setContentText();
-                if (re.getStatus().equals("1")){
+                if (re.getStatus().equals("1")) {
                     // TODO: change
                     alert.setContentText("Circle win");
-                    accounts.changeData(clientHandler.getUsername(), clientHandler.myTurn, false);
-                }
-//                                System.out.println("Circle win");
-                else if (re.getStatus().equals("2")){
+                    if (clientHandler.myTurn) {
+                        try {
+                            Thread.sleep(500);
+                        } catch (Exception e) {
+
+                        }
+                    }
+                    accounts.changeData(clientHandler.getUsername(), clientHandler.myTurn, clientHandler.myTurn);
+                } else if (re.getStatus().equals("2")) {
                     alert.setContentText("Line win");
-                    accounts.changeData(clientHandler.getUsername(), clientHandler.myTurn, true);
-                }
-//                                System.out.println("Line win");
-                else {
+                    accounts.changeData(clientHandler.getUsername(), clientHandler.myTurn, !clientHandler.getMyTurn());
+                } else {
                     alert.setContentText("Draw");
                     accounts.changeData(clientHandler.getUsername(), clientHandler.myTurn, false);
                 }
@@ -310,8 +323,7 @@ public class Controller implements Initializable {
                     System.out.println("Username=" + usernamePassword.getKey() + ", Password=" + usernamePassword.getValue());
                     Action log = new log("log", "signup", usernamePassword.getKey(), usernamePassword.getValue(), "", "Line");
                     myName = usernamePassword.getKey();
-                    clientHandler.setUsername(myName);
-                    accounts.addMatch(clientHandler.getUsername(), clientHandler.myTurn);
+//                    clientHandler.setUsername(myName);
 
                     alertMsg("sign in successful!");
 
@@ -390,9 +402,9 @@ public class Controller implements Initializable {
                 Action log = new log("log", "signup", usernamePassword.getKey(), usernamePassword.getValue(), "", "Line");
 //                clientHandler.send(log);
                 myName = usernamePassword.getKey();
-                clientHandler.setUsername(myName);
-                accounts.insertUser(usernamePassword.getKey(),usernamePassword.getValue());
-                accounts.addMatch(clientHandler.getUsername(), clientHandler.myTurn);
+//                clientHandler.setUsername(myName);
+                accounts.insertUser(usernamePassword.getKey(), usernamePassword.getValue());
+//                accounts.addMatch(clientHandler.getUsername(), clientHandler.myTurn);
                 alertMsg("sign up successful!");
             });
         });
@@ -407,29 +419,44 @@ public class Controller implements Initializable {
             alert.showAndWait();
         });
     }
+
     @FXML
-    protected void connectButton(){
+    protected void connectButton() {
+        if (connected == 0) {
+            clientHandler = new ClientHandler(myName);
+//            accounts.addMatch(clientHandler.getUsername(), clientHandler.myTurn);
+            connected++;
+        }
         Platform.runLater(() -> {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("connect");
             alert.setHeaderText("detail:");
-//            alert.setContentText();
+            alert.setContentText("connected");
             alert.showAndWait();
         });
     }
+
     @FXML
-    protected void accountButton(){
+    protected void accountButton() {
         Platform.runLater(() -> {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("account");
             alert.setHeaderText("detail:");
-            alert.setContentText(accounts.getOne(clientHandler.getUsername()));
+            if (clientHandler != null)
+                alert.setContentText(accounts.getOne(clientHandler.getUsername()));
+            else
+                alert.setContentText("you need connect server");
             alert.showAndWait();
         });
     }
+
     @FXML
-    protected void exitButton(){
-        clientHandler.closeClient();
+    protected void exitButton() {
+        if (clientHandler != null)
+            clientHandler.closeClient();
         System.exit(0);
     }
+
+    @FXML
+    TextArea user;
 }

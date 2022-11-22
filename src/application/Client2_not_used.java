@@ -7,7 +7,7 @@ import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
-public class Client2 extends Application {
+public class Client2_not_used extends Application {
     private static int logCheck = 0;
 
     @Override

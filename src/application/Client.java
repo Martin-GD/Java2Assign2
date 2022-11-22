@@ -35,7 +35,7 @@ public class Client extends Application {
 
             fxmlLoader.setLocation(getClass().getClassLoader().getResource("mainUI.fxml"));
             Pane root = fxmlLoader.load();
-            primaryStage.setTitle("Tic Tac Toe Client Line");
+            primaryStage.setTitle("Tic Tac Toe Client ");
             primaryStage.setScene(new Scene(root));
             primaryStage.setResizable(false);
             primaryStage.show();

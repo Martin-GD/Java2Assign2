@@ -56,21 +56,21 @@ public class ServerManger extends Thread {
                 DataInputStream in = new DataInputStream(inputStream);
                 s = in.readUTF();
                 DataOutputStream out = new DataOutputStream(outputStream);
-                if (s.split(",")[0].equals("log")){
+                if (s.split(",")[0].equals("log")) {
                     log log = new log(s);
-                    if (log.getType().equals("signin")){
-                        if (checkUser(log.getName(),log.getUserName())){
+                    if (log.getType().equals("signin")) {
+                        if (checkUser(log.getName(), log.getUserName())) {
                             log.status = "success";
                             out.writeUTF(log.toString());
                             if (log.identity.equals("line"))
                                 LinePlayer.add(new Player(log.getUserName(), socket));
                             else
                                 CirclePlayer.add(new Player(log.getUserName(), socket));
-                        }else {
+                        } else {
                             log.status = "fail";
                             out.writeUTF(log.toString());
                         }
-                    }else if (log.getType().equals("signup")){
+                    } else if (log.getType().equals("signup")) {
                         System.out.println(insertUser(log.getUserName(), log.getPassword()));
                         if (log.identity.equals("line"))
                             LinePlayer.add(new Player(log.getUserName(), socket));
@@ -95,29 +95,30 @@ public class ServerManger extends Thread {
 
         }
     }
+
     public Boolean checkUser(String username, String password) throws SQLException {
         Connection con = db.getCon();
 
-        try{
-        PreparedStatement checkPass = con.prepareStatement("select username, password, circle_match, circle_win, line_match, line_win from account ");
-        ResultSet resultSet = checkPass.executeQuery();
-        ArrayList<account> allAccount = new ArrayList<>();
-        while (resultSet.next()){
-            account a =new account(resultSet.getString("username"),resultSet.getString("password"),
-                    resultSet.getInt("circle_match"),
-                    resultSet.getInt("circle_win"),
-                    resultSet.getInt("line_match"),
-                    resultSet.getInt("line_win"));
-            allAccount.add(a);
-        }
-        for (int i = 0; i < allAccount.size(); i++) {
-            if (allAccount.get(i).getUsername().equals(username)&&allAccount.get(i).getPassword().equals(password))
-                return true;
-        }
-        return false;
-        } catch (SQLException e){
+        try {
+            PreparedStatement checkPass = con.prepareStatement("select username, password, circle_match, circle_win, line_match, line_win from account ");
+            ResultSet resultSet = checkPass.executeQuery();
+            ArrayList<account> allAccount = new ArrayList<>();
+            while (resultSet.next()) {
+                account a = new account(resultSet.getString("username"), resultSet.getString("password"),
+                        resultSet.getInt("circle_match"),
+                        resultSet.getInt("circle_win"),
+                        resultSet.getInt("line_match"),
+                        resultSet.getInt("line_win"));
+                allAccount.add(a);
+            }
+            for (int i = 0; i < allAccount.size(); i++) {
+                if (allAccount.get(i).getUsername().equals(username) && allAccount.get(i).getPassword().equals(password))
+                    return true;
+            }
             return false;
-        }finally {
+        } catch (SQLException e) {
+            return false;
+        } finally {
             con.close();
         }
     }
@@ -125,20 +126,21 @@ public class ServerManger extends Thread {
 
     public String insertUser(String username, String password) throws SQLException {
         Connection con = db.getCon();
-        try{
+        try {
             PreparedStatement insertU = con.prepareStatement("insert into account (username, password, circle_match, circle_win, line_match, line_win) values (?, ?, 0,0,0,0)");
-            insertU.setString(1,username);
-            insertU.setString(2,password);
+            insertU.setString(1, username);
+            insertU.setString(2, password);
             insertU.execute();
             return "success";
-        } catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
             return "fail";
-        }finally {
+        } finally {
             con.close();
         }
     }
-    class Player{
+
+    class Player {
         public String username;
         public Socket socket;
 
@@ -147,7 +149,8 @@ public class ServerManger extends Thread {
             this.socket = socket;
         }
     }
-    class database{
+
+    class database {
 
         private ComboPooledDataSource dbPool = new ComboPooledDataSource();
         private String host = "localhost";
@@ -156,7 +159,7 @@ public class ServerManger extends Thread {
         private String pwd = "123456";
         private String port = "5432";
 
-        public database(){
+        public database() {
             openDB();
         }
 

@@ -13,25 +13,27 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Vector;
 
-public class ServerHandler extends Thread {
+public class ServerHandler_can_choose extends Thread {
     public static Vector<ServerHandler> allSocket = new Vector<>();
 
     private Socket socket = null;
     private Socket socket2 = null;
+
     public static ArrayList<account> accounts = new ArrayList<>();
 
 
-    public ServerHandler(Socket socket, Socket socket2) {
+    public ServerHandler_can_choose(Socket socket, Socket socket2) {
         try {
             this.socket = socket;
             this.socket2 = socket2;
+
         } catch (Exception e) {
             e.printStackTrace();
 
         }
     }
 
-    public ServerHandler() {
+    public ServerHandler_can_choose() {
     }
 
     @Override
@@ -49,9 +51,35 @@ public class ServerHandler extends Thread {
             //回复客户端
             outputStream2 = socket2.getOutputStream();
 
-            Boolean initialTurn = false;
             OutputStream finalOutputStream2 = outputStream2;
             OutputStream finalOutputStream = outputStream;
+            try {
+                DataOutputStream out = new DataOutputStream(finalOutputStream);
+                out.writeUTF("false");
+                Thread.sleep(500);
+                System.out.println("send send");
+            } catch (Exception e) {
+                socket = socket2;
+//                socket2 = serverSocket.accept();
+//                inputStream = socket.getInputStream();
+//                //回复客户端
+//                outputStream = socket.getOutputStream();
+//                inputStream2 = socket2.getInputStream();
+//                //回复客户端
+//                outputStream2 = socket2.getOutputStream();
+//                DataOutputStream out = new DataOutputStream(outputStream);
+//                out.writeUTF("false");
+//                Thread.sleep(500);
+//                DataOutputStream out2 = new DataOutputStream(outputStream2);
+//                out2.writeUTF("true");
+            }
+            try {
+                DataOutputStream out2 = new DataOutputStream(finalOutputStream2);
+                out2.writeUTF("true");
+            } catch (Exception e) {
+
+            }
+            Boolean initialTurn = false;
             new Thread(() -> {
                 try {
                     while (true) {
@@ -69,7 +97,6 @@ public class ServerHandler extends Thread {
                         }
                         try {
                             DataOutputStream out2 = new DataOutputStream(finalOutputStream2);
-//                            Action err = new error("","");
                             out2.writeUTF("");
                         } catch (Exception e) {
                             DataOutputStream out = new DataOutputStream(finalOutputStream);
@@ -79,7 +106,6 @@ public class ServerHandler extends Thread {
                         }
                         try {
                             DataOutputStream out = new DataOutputStream(finalOutputStream);
-//                            Action err = new error("","");
                             out.writeUTF("");
                         } catch (Exception e) {
                             DataOutputStream out2 = new DataOutputStream(finalOutputStream2);
@@ -93,41 +119,8 @@ public class ServerHandler extends Thread {
                     System.out.println("new thread error");
                 }
             }).start();
-//            while (true) {
-//                if (socket.isClosed())
-//                    break;
-//                String s;
-//                DataInputStream in = new DataInputStream(inputStream);
-//                s = in.readUTF();
-//                DataOutputStream out = new DataOutputStream(outputStream);
-//                if (s.split(",")[0].equals("log")){
-//                    log log = new log(s);
-//                    if (log.getType().equals("signin")){
-//                        if (checkUser(log.getName(),log.getUserName())){
-//                            log.status = "success";
-//                            out.writeUTF(log.toString());
-//                        }else {
-//                            log.status = "fail";
-//                            out.writeUTF(log.toString());
-//                        }
-//                    }else if (log.getType().equals("signup")){
-//                        System.out.println(insertUser(log.getUserName(), log.getPassword()));
-//                    }
-//                    break;
-//                }
-//                Thread.sleep(10);
-//            }
             while (true) {
                 if (socket.isClosed() || socket2.isClosed()) {
-//                    if (socket.isClosed()){
-//                        DataOutputStream out2 = new DataOutputStream(outputStream2);
-//                        Action err = new error("error","another player close");
-//                        out2.writeUTF(err.toString());
-//                    }else {
-//                        DataOutputStream out = new DataOutputStream(outputStream);
-//                        Action err = new error("error","another player close");
-//                        out.writeUTF(err.toString());
-//                    }
                     break;
                 }
                 String s;
@@ -136,9 +129,7 @@ public class ServerHandler extends Thread {
                         DataInputStream in = new DataInputStream(inputStream);
                         s = in.readUTF();
                     } catch (Exception e) {
-//                        DataOutputStream out2 = new DataOutputStream(outputStream2);
-//                        Action err = new error("error","another player close");
-//                        out2.writeUTF(err.toString());
+
                         System.out.println("error 1");
                         break;
                     }
@@ -175,7 +166,6 @@ public class ServerHandler extends Thread {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 
     public void closeServerHandler() {
