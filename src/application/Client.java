@@ -19,43 +19,41 @@ import javafx.util.Pair;
 import java.util.Optional;
 
 public class Client extends Application {
-    private static int logCheck = 0;
+  private static int logCheck = 0;
 
-    private Stage primaryStage;
-    private String myName;
+  private Stage primaryStage;
+  private String myName;
 
-    @Override
-    public void start(Stage primaryStage) {
-        try {
+  @Override
+  public void start(Stage primaryStage) {
+    try {
 
-            this.primaryStage = primaryStage;
+      this.primaryStage = primaryStage;
 
 
-            FXMLLoader fxmlLoader = new FXMLLoader();
+      FXMLLoader fxmlLoader = new FXMLLoader();
 
-            fxmlLoader.setLocation(getClass().getClassLoader().getResource("mainUI.fxml"));
-            Pane root = fxmlLoader.load();
-            primaryStage.setTitle("Tic Tac Toe Client ");
-            primaryStage.setScene(new Scene(root));
-            primaryStage.setResizable(false);
-            primaryStage.show();
-//            primaryStage.setOnCloseRequest(e -> Platform.exit());
-            primaryStage.setOnCloseRequest(e -> {
-                Platform.exit();
-//                System.out.println("Line Abnormal exit");
-                System.exit(0);
-            });
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+      fxmlLoader.setLocation(getClass().getClassLoader().getResource("mainUI.fxml"));
+      Pane root = fxmlLoader.load();
+      primaryStage.setTitle("Tic Tac Toe Client ");
+      primaryStage.setScene(new Scene(root));
+      primaryStage.setResizable(false);
+      primaryStage.show();
+      primaryStage.setOnCloseRequest(e -> {
+        Platform.exit();
+        System.exit(0);
+      });
+    } catch (Exception e) {
+      e.printStackTrace();
     }
+  }
 
-    public static void main(String[] args) {
-        launch(args);
-    }
+  public static void main(String[] args) {
+    launch(args);
+  }
 
-    public void match() {
-        launch();
-    }
+  public void match() {
+    launch();
+  }
 
 }
